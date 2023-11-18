@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/fredv/coding/SavvyCoders/dap-curriculum/Section07/Resources/SavvyCoders_SQL_chargeDB.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="3009"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,6:maindimDay"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="EVCharging" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="78"/><column index="2" value="75"/><column index="3" value="60"/><column index="4" value="129"/><column index="5" value="129"/><column index="6" value="79"/><column index="7" value="70"/><column index="8" value="113"/><column index="9" value="120"/><column index="10" value="75"/><column index="11" value="72"/><column index="12" value="74"/><column index="13" value="63"/><column index="14" value="76"/><column index="15" value="81"/><column index="16" value="91"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="dimDay" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="71"/><column index="2" value="91"/><column index="3" value="73"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 2">-- select *
+-- from EVCharging
+-- limit 5;
+
+
+-- SELECT avg(chargeTimeHrs) as &quot;avgChargeTime&quot;
+-- from EVCharging
+
+-- SELECT AVG(chargeTimeHrs) as 'avgChargeTime'
+-- FROM EVCharging
+
+-- sum the charge hours
+-- group user id
+-- sort in descending ORDER
+-- limit 5
+
+SELECT userId, sum(chargeTimeHrs) as &quot;TotalChargeHours&quot;
+FROM EVCharging
+group by userId
+order by sum(chargeTimeHrs) DESC
+limit 5;</sql><sql name="breakout 1">-- 1. Each Charging location has multiple charging stations. Using the EVCharging table, 
+-- Reveal the locationId and Find out how many charging stations there are at each Charging location and rename this column numStations. 
+-- Order the result set so the location with the most stations appears first. Limit the output to 20.
+
+-- SELECT count(DISTINCT locationId) as &quot;numStations&quot;,
+-- 	count(*) as users
+-- FROM EVCharging
+-- GROUP by locationId
+-- ORDER by count(*) DESC
+-- limit 20;
+
+-- SELECT locationId, 
+-- 		Count(DISTINCT stationId) as numstations
+-- from EVCharging
+-- GROUP by locationId
+-- ORDER by 2 DESC
+-- LIMIT 20;
+
+-- 2. Using the EVCharging table, I would like to know the average power consumption per user. \
+-- Please list the user identification and rename the aggregation column to avgPower. Round this number to 2 decimal places.
+
+-- SELECT userId,  ROUND(AVG(chargeTimeHrs),2) as avgPower
+-- from EVCharging
+-- group by userId
+
+
+-- 3. Using the EVCharging table, Find the total power output from each charging location. 
+-- You list the location identification and rename other column to totalpowerKWH 
+-- Round the answer to 2 deciaml points and list the out put in highest to lowest order. Limit the order to the top 10.
+
+SELECT stationId, round(sum(kwhTotal),2) as totalpowerKWH
+from EVCharging
+group by stationId
+order by 2 DESC
+limit 10;
+
+</sql><sql name="SQL 4">-- Find the total power consumed from charging EV's by each User on Wednesday's. 
+-- Round the answer to 2 deciaml points and list the out put in highest to lowest order. Limit the order to the top 15 users.
+
+SELECT locationId, userId, round(sum(chargetimehrs),2) as chargetime
+FROM EVCharging
+group by locationId, userId 
+order BY 1, 3 desc
+</sql><sql name="SQL 5">select userId, sum(&quot;kwhTotal&quot;) as totalpower
+from EVCharging
+group by userId
+having sum(&quot;kwhTotal&quot;) &gt; 500
+order by 2 desc</sql><sql name="breakout 2">-- 1. Using the EVCharging table, Find the total time spent charging and total power output for each user. 
+-- You should have three columns: userId, totalTimeHrs, and totalPwrKWH. 
+-- Order the output from largest to smallest power consumption and limit the results to the top 5.
+
+-- SELECT *
+-- from EVCharging
+
+SELECT userId, 
+		sum(&quot;chargeTimeHrs&quot;) as totalTimeHrs,
+		sum(kwhTotal) as totalPwrKWH
+from EVCharging
+group by userId
+ORDER by  3 DESC
+limit 5;
+	
+
+
+-- 2. Using the EVCharging Table, Find the total time spent charging (totalTimeHrs), and the total power consumed(totalPwrKwh) 
+-- from charging EV's by each User on Thursdays. Round the answer to 2 deciaml points and list the out put in highest to lowest order. 
+-- Limit the order to the top 25 users.
+
+
+
+
+-- 3. The EV charging firm is wondering which charging Stations are being used the least. 
+-- They would like to move these stations to a place with a greater need. 
+-- Please find the total number of hours (sumTotalHrs) that each station is used. 
+-- The output should contain all of the stations that have a total usage of less than 5 hours.</sql><sql name="Joins">-- select *
+-- from factCharge
+-- limit 5;
+-- 
+-- select *
+-- from dimFacility
+
+-- select fc.facilityID, df.FacilityKey, df.typeFacility
+-- from factCharge fc
+-- inner join dimFacility df on fc.facilityID= df.FacilityKey
+
+
+
+select df.typeFacility, 
+	round(sum(chargetimehrs),2) as totalchargetime
+from factCharge fc
+inner join dimFacility df on fc.facilityID= df.FacilityKey
+group by df.typeFacility
+order by 2 DESC</sql><sql name="breakout 3">-- 1. Using factCharge and dimDay, find out which day of the week has the highest average charging time? 
+-- Return dayOfWeek and avgChargeTime. Please round avgChargeTime to two decimal places and order the result set from highest to lowest avgChargeTime.
+-- 
+
+
+
+select dd.dayOfWeek, round(avg(&quot;chargeTimeHrs&quot;),2) as avgcharge
+from factCharge fc
+inner join dimDay dd on fc.dayID = dd.dateKey
+group by dayOfWeek
+order by 2 desc
+limit 1;
+
+-- 2. Using dimUser and factCharge, which app platform had the most amount of charging sessions. Return appPlatform and numCharges. 
+-- Order the result set from highest to lowest number of charges.</sql><current_tab id="6"/></tab_sql></sqlb_project>
