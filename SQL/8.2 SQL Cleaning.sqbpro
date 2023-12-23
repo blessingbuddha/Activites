@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="C:/Users/fredv/coding/SavvyCoders/dap-curriculum/Section08/resources/SQL Cleaning.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="3"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1857"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,6:mainevCars"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="SavvyCoders_SQL_CleaningLab" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths/><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table><table schema="main" name="evCars" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="75"/><column index="2" value="211"/><column index="3" value="55"/><column index="4" value="80"/><column index="5" value="58"/><column index="6" value="78"/><column index="7" value="90"/><column index="8" value="164"/><column index="9" value="110"/><column index="10" value="107"/><column index="11" value="82"/><column index="12" value="74"/><column index="13" value="54"/><column index="14" value="78"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="Section 1 - Trimming and Renaming">-- trimming &quot;sec&quot; from accel COLUMN 
+SELECT Accel, rtrim(Accel, 'sec') as trimmed
+from evCars
+
+UPDATE evCars
+SET Accel= rtrim(Accel, 'sec')
+
+
+SELECT *
+FROM evCars
+
+
+SELECT *
+FROM evCars
+
+-- Renaming Accel to Accelsecs0to60
+
+ALTER TABLE evCars
+RENAME Accel to Accelsecs0to60</sql><sql name="Section 2">SELECT TopSpeed, Range, efficiency, FastCharge
+FROM evCars
+LIMIT 10
+-- 2.1
+SELECT TopSpeed 
+FROM evCars
+
+--2.2 
+SELECT TopSpeed, rtrim(TopSpeed, 'km/h') as trimmed
+from evCars
+
+-- 2.3
+SELECT TopSpeed
+FROM evCars
+
+-- 2.4
+UPDATE evCars 
+SET TopSpeed = rtrim(TopSpeed, 'km/h')
+
+-- 2.5
+SELECT TopSpeed 
+FROM evCars
+
+-- 2.6
+SELECT TopSpeed, Round(TopSpeed * 0.6213712, 2)
+FROM evCars 
+
+-- 2.6.1
+UPDATE evCars 
+SET TopSpeed = Round(TopSpeed * 0.6213712, 2)
+
+-- 2.7
+ALTER TABLE evCars 
+RENAME TopSpeed TO topSpeedMPH
+
+-- 2.8
+SELECT * 
+FROM evCars 
+</sql><sql name="Section 3">--3.1
+SELECT RANGE
+from evCars
+
+--3.2
+SELECT Range,
+		RTRIM(Range, &quot; km&quot;) 
+FROM evCars;
+
+--3.3
+UPDATE evCars
+SET RANGE = RTRIM(Range, &quot; km&quot;)
+
+--3.4
+SELECT Range
+FROM evCars; 
+
+--3.5
+SELECT Range, 
+		ROUND(Range * .6213712, 1) 
+FROM evCars 
+
+--3.6
+UPDATE evCars
+SET Range = Range * .6213712
+
+--3.7 
+ALTER TABLE evCars
+RENAME Range TO RangeMiles
+
+--3.8
+SELECT *
+FROM evCars</sql><sql name="Section 4">-- 4.1
+SELECT Efficiency, FastCharge
+FROM evCars
+-- 4.2
+SELECT RTRIM(Efficiency, &quot; Wh/km&quot;), RTRIM(FastCharge, &quot; km/h&quot;)
+FROM evCars
+-- 4.3
+SELECT Efficiency, RTRIM(Efficiency, &quot; Wh/km&quot;) AS NewEff,
+FastCharge, RTRIM(FastCharge, &quot; km/h&quot;) AS NewFas
+FROM evCars
+-- 4.4
+UPDATE evCars
+SET
+Efficiency= RTRIM(Efficiency, &quot; Wh/km&quot;),
+FastCharge= RTRIM(FastCharge, &quot; km/h&quot;)
+-- 4.5
+SELECT * FROM
+evCars
+-- 4.6
+SELECT FastCharge, RTRIM(FastCharge, &quot; km/h&quot;) AS OneHourFastChargeMiles,
+ROUND(FastCharge*0.6213, 1) AS efficiencyWHperKM
+FROM evCars
+-- 4.7
+ALTER TABLE evCars
+RENAME FastCharge TO OneHourFastChargeMiles
+ALTER TABLE evCars
+RENAME Efficiency TO efficiencyWHperKM
+-- 4.8
+SELECT * FROM
+evCars</sql><sql name="Section 5">-- 5.1
+-- 103 rows
+SELECT RapidCharge, Count(*)
+FROM evCars
+GROUP BY RapidCharge
+
+-- 5.2
+
+
+-- 5.3
+-- 103 rows
+SELECT Replace('Rapid charging not possible', 'Rapid charging not possible', 'No') as replacedstring
+FROM evCars
+
+-- 103 row
+SELECT Replace('Rapid charging possible', 'Rapid charging possible', 'Yes') as yesString
+FROM evCars
+
+-- 5.4
+
+update evCars
+set rapidCharge = 'Yes' 
+where RapidCharge = 'Rapid charging possible'
+
+update evCars
+set rapidCharge = 'No' 
+where RapidCharge = 'Rapid charging not possible'
+
+SELECT *
+FROM evCars</sql><sql name="Section 6- Case Statement">-- 6.1
+SELECT PowerTrain, count(*)
+from evCars
+GROUP by PowerTrain
+
+-- 6.2 
+-- 6.3
+SELECT PowerTrain,
+	CASE
+		WHEN PowerTrain = &quot;All Wheel Drive&quot; THEN &quot;AWD&quot; 
+		WHEN PowerTrain = &quot;Front Wheel Drive&quot; THEN &quot;FWD&quot;
+		WHEN PowerTrain = &quot;Rear Wheel Drive&quot; THEN &quot;RWD&quot;
+	END as abbr
+FROM evCars
+
+-- 6.4
+UPDATE evCars
+SET PowerTrain = CASE
+		WHEN PowerTrain = &quot;All Wheel Drive&quot; THEN &quot;AWD&quot; 
+		WHEN PowerTrain = &quot;Front Wheel Drive&quot; THEN &quot;FWD&quot;
+		WHEN PowerTrain = &quot;Rear Wheel Drive&quot; THEN &quot;RWD&quot;
+		END
+		
+SELECT *
+FROM evCars
+</sql><sql name="Section 7">-- 7.1 Convert the PriceEuro to PriceUSD
+-- Let's convert the PriceEuro into US Dollar
+-- Write a select statement to multiply the PriceEuro by 1.09 and Return PriceEuro and calculated column. Round the calculated column to 2 decimal places.
+-- After writing and executing the above query to see the original and the converted values, review them side by side and if satisfied then move to the next step
+
+SELECT PriceEuro, round(PriceEuro * 1.09, 2) as PriceUSD
+FROM evCars
+
+-- - 7.2 Write the Update Statements
+-- Turn this query into an UPDATE statement. Remember to round the calculation to two decimal points.
+-- Write a select query from to check the PriceEuro column
+
+UPDATE evCars 
+SET PriceEuro = round(PriceEuro * 1.09, 2)
+
+
+-- - 7.3 Rename the Column
+-- Rename PriceEuro to PriceUSD
+
+ALTER TABLE evCars 
+RENAME PriceEuro TO PriceUSD
+
+SELECT *
+FROM evCars</sql><current_tab id="0"/></tab_sql></sqlb_project>
